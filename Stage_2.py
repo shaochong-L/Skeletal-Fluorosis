@@ -473,8 +473,6 @@ def Ens_L(width,height,channel,classes):
     res = Flatten()(res)
     res = KMax()(res)
 
-
-
     # DenseNet
     dense = Dense6(x_in, 8, 2)
 
@@ -521,11 +519,7 @@ def Ens_L(width,height,channel,classes):
     sep4 = Flatten()(sep4)
     sep4 = KMax()(sep4)
 
-
-
     conv = concatenate([dense, res, sep4], axis=-1)
-
-
 
     x = Dense(classes, activation='softmax')(conv)
     model = Model(inputs=inpt, outputs=x)
