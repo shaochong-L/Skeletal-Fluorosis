@@ -9,7 +9,6 @@ def my_PreProc(data):
     train_imgs = rgb2gray(data)
     train_imgs = dataset_normalized(train_imgs)
     train_imgs = clahe_equalized(train_imgs)
-    train_imgs = adjust_gamma(train_imgs, 1.2)
     train_imgs = train_imgs/255.
     return train_imgs
 def rgb2gray(rgb: object) -> object:
@@ -34,14 +33,6 @@ def clahe_equalized(imgs):
     for i in range(imgs.shape[0]):
         imgs_equalized[i,0] = clahe.apply(np.array(imgs[i,0], dtype = np.uint8))
     return imgs_equalized
-def adjust_gamma(imgs, gamma=1.0):
-    assert (len(imgs.shape)==4)  #4D arrays
-    invGamma = 1.0 / gamma
-    table = np.array([((i / 255.0) ** invGamma) * 255 for i in np.arange(0, 256)]).astype("uint8")
-    new_imgs = np.empty(imgs.shape)
-    for i in range(imgs.shape[0]):
-        new_imgs[i,0] = cv2.LUT(np.array(imgs[i,0], dtype = np.uint8), table)
-    return new_imgs
 
 
 img = cv2.imread()
