@@ -1,4 +1,6 @@
-# coding=utf-8
+#Stage 2
+#The segmentation result and the original image are fused and classified
+
 from keras.models import Model
 from keras.layers import Input, Dense, Dropout, BatchNormalization, Conv2D, MaxPooling2D, AveragePooling2D, concatenate, \
     Activation, ZeroPadding2D, Reshape, MaxPooling3D, multiply, InputSpec, SeparableConv2D, advanced_activations
@@ -27,11 +29,11 @@ matplotlib.use('Agg')
 NB_CLASS=3
 IM_WIDTH=768
 IM_HEIGHT=1024
-train_root=     'D:/19S004085/project1/bone/data_new/train/'
-vaildation_root='D:/19S004085/project1/bone/data_new/test'
-test_root=      'D:/19S004085/project1/bone/data_new/test/'
-model_root =    'D:/19S004085/project1/bone/data_new/Ens_L_90.h5111'
-best_model_root ='D:/19S004085/project1/bone/data_new/Ens_L_best.h5111'
+train_root=     'train/'
+vaildation_root='vaildation/'
+test_root=      'test/'
+model_root =    'model.h5'
+best_model_root ='model_best.h5'
 
 batch_size = 12
 EPOCH = 100
@@ -84,9 +86,8 @@ class KMax(Layer):
 
     def call(self, inputs):
         x = tf.nn.top_k(inputs, self.k, sorted=True, name=None)[0]
-        return x    #给通道加权重
+        return x 
 
-    #确定输出维数(不然输出会默认为与输入同尺寸)
     def compute_output_shape(self, input_shape):
         return (input_shape[0], self.k)
 
@@ -596,23 +597,17 @@ if __name__ == '__main__':
                             , validation_steps=vaild_generator.n / batch_size,
                             callbacks=callbacks_list)
         model.save(model_root)
-    # 加载模型h5文件
+        
     model = load_model(model_root, custom_objects={'my_loss': my_loss, 'KMax': KMax})
     model.summary()
-    # 要预测的图片保存在这里
     predict_dir = test_root
-    # 这个路径下有两个文件，分别是cat和dog
     test = os.listdir(predict_dir)
-    # 打印后：['cat', 'dog']
     print(test)
-    # 新建一个列表保存预测图片的地址
     images = []
-    # 获取每张图片的地址，并保存在列表images中
     for testpath in test:
         for fn in os.listdir(os.path.join(predict_dir, testpath)):
             if fn.endswith('png'):
                 fd = os.path.join(predict_dir, testpath, fn)
-                # 调用函数，规范化图片
                 pre_x = get_one_image(fd)
                 pre_y = model.predict(pre_x)
                 print(fn, pre_y[0])
