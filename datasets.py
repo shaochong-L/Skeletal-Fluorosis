@@ -1,8 +1,3 @@
-#==========================================================
-#
-#  This prepare the hdf5 datasets of the DRIVE database
-#
-#============================================================
 
 import os
 import h5py
@@ -16,22 +11,11 @@ def write_hdf5(arr,outfile):
     f.create_dataset("image", data=arr, dtype=arr.dtype)
 
 
-#------------Path of the images --------------------------------------------------------------
-#train
-original_imgs_train = "./DRIVE/training/images/"
-groundTruth_imgs_train = "./DRIVE/training/1st_manual/"
-borderMasks_imgs_train = "./DRIVE/training/mask/"
-#test
-original_imgs_test = "./DRIVE/test/images/"
-groundTruth_imgs_test = "./DRIVE/test/1st_manual/"
-borderMasks_imgs_test = "./DRIVE/test/mask/"
-#---------------------------------------------------------------------------------------------
-
 Nimgs = 40
 channels = 3
 height = 500
 width = 750
-dataset_path = "./DRIVE_datasets_training_testing/"
+dataset_path = "./datasets/"
 
 def get_datasets(imgs_dir: object, groundTruth_dir: object, borderMasks_dir: object, train_test: object = "null") -> object:
     imgs = np.empty((Nimgs,height,width,channels))
